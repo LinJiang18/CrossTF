@@ -8,7 +8,7 @@ The real side is the whole dataset. A generated set must have the same length an
 of channels; if it has more series than the real data (SDForger), a random subset of the
 real size is drawn (seed 0); a set with fewer series is skipped.
 
-    # CrossTF's released samples and every baseline output found under outputs/
+    # every generated set under results/ (released) and outputs/ (regenerated)
     python evaluation/evaluate.py --dataset ecg --all
     # specific files
     python evaluation/evaluate.py --dataset ecg --gen results/CrossTF/ecg/CrossTF_ecg4_generatedata.npy
@@ -45,18 +45,14 @@ def real_path(ds: str) -> Path:
 
 
 def discover(ds: str) -> dict[str, Path]:
-    """{label: file} for CrossTF's released samples and every generated set under
-    outputs/<Method>/[seed<N>/]<ds>/ (and outputs/CrossTF_<ds><seed>/ from main.py)."""
+    """{label: file} for every generated set of `ds` under results/ and outputs/."""
+    from evaluation.make_table import discover as _discover
     found: dict[str, Path] = {}
-    for f in sorted((ROOT / 'results' / 'CrossTF' / ds).glob('*_generatedata.npy')):
-        found[f'CrossTF(released)/{f.stem.replace("_generatedata", "")}'] = f
-    out = ROOT / 'outputs'
-    for f in sorted(out.glob(f'CrossTF_{ds}[0-9]*/*_generatedata.npy')):
-        found[f'CrossTF/{f.parent.name}'] = f
-    for f in sorted(out.glob(f'*/{ds}/*_generatedata.npy')) + \
-            sorted(out.glob(f'*/seed*/{ds}/*_generatedata.npy')):
-        rel = f.relative_to(out).parts
-        found['/'.join(rel[:-2]) if len(rel) > 3 else rel[0]] = f
+    for root in (ROOT / 'results', ROOT / 'outputs'):
+        if root.is_dir():
+            for method, files in _discover(root, ds).items():
+                for f in files:
+                    found[str(f.relative_to(ROOT))[:-len('_generatedata.npy')]] = f
     return found
 
 

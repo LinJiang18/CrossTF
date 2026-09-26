@@ -23,9 +23,9 @@ models/              branch model: 1D EDM diffusion with a delay-embedding (time
                      STFT (frequency) 2D U-Net denoiser
 crosstf/             cross-view fusion, prefix-cached sampler, coefficient solver
 utils/               config/data helpers
-evaluation/          the ten metrics (evaluate.py is the entry point)
+evaluation/          metrics; make_table.py reproduces the result tables
 data/                the seven datasets, (N, T, 1) float32, original units
-results/CrossTF/     solved coefficients (alpha.json) and generated samples per dataset
+results/             generated sets behind the reported numbers (CrossTF + baselines)
 baselines/           the eleven baselines (see baselines/README.md)
 ```
 
@@ -99,34 +99,52 @@ per dataset.
 
 ## Released results
 
-`results/CrossTF/<dataset>/` holds `alpha.json` (the per-step coefficients used for the
-paper) and `CrossTF_<dataset><seed>_generatedata.npy` for training seeds 4, 5 and 6,
-each with the same shape as the real data. Model checkpoints are not included (about
-2.7 GB for the 42 branch models); they are reproduced by step 1 above. GPU
-non-determinism means retrained branches and re-solved coefficients will not match the
-released ones bit for bit.
+`results/` holds the generated sets behind the reported numbers, one file per method,
+dataset and training seed, each with the same shape as the real data:
+
+```
+results/CrossTF/<dataset>/alpha.json                          solved per-step coefficients
+results/CrossTF/<dataset>/CrossTF_<dataset><seed>_generatedata.npy        seeds 4, 5, 6
+results/<Baseline>/[seed<N>/]<dataset>/<Baseline>_<dataset>_generatedata.npy
+```
+
+Baselines with three training seeds (DiffTime, Diffusion-TS, E4GEN, ImagenTime) have
+`seed1/`..`seed3/`; the others were run once. Model checkpoints are not included (about
+2.7 GB for CrossTF's 42 branch models); they are reproduced by step 1 above. GPU
+non-determinism means retrained models will not match the released samples bit for bit.
 
 ## Evaluation
 
+The per-dataset result tables (every method, seven metrics, mean over training seeds,
+best in bold and second best underlined) are reproduced from the released samples by
+
 ```bash
-# the released CrossTF samples and every generated set found under outputs/
-python evaluation/evaluate.py --dataset ecg --all --out scores/ecg.json
-# specific files; --cheap-only skips the three learned metrics (no GPU needed)
-python evaluation/evaluate.py --dataset ecg --gen path/to/generated.npy --cheap-only
+python evaluation/make_table.py --out tables/          # all seven datasets, CPU only
+python evaluation/make_table.py --root outputs         # the same for regenerated samples
 ```
 
-The ten metrics (all lower is better):
+which prints one Markdown table per dataset and writes `tables/<dataset>.{md,tex}` and
+`tables/scores.json` (including per-seed values).
 
-| group | metrics | code |
+| column | metric | code |
 |---|---|---|
-| extreme fidelity | `lev_rate`, `lev_excess`, `jmp_rate`, `jmp_excess` | `evaluation/extreme_quantities.py` |
-| whole-series fidelity | `wasserstein`, `acd`, `marginal` | `evaluation/trunk.py` |
-| learned fidelity | `discriminative`, `predictive`, `context_fid` | `evaluation/fidelity.py` |
+| Mag-Rate, Mag-Excess | `lev_rate`, `lev_excess` | `evaluation/extreme_quantities.py` |
+| Chg-Rate, Chg-Excess | `jmp_rate`, `jmp_excess` | `evaluation/extreme_quantities.py` |
+| Wass., Marg., ACD | `wasserstein`, `marginal`, `acd` | `evaluation/trunk.py` |
 
-The four extreme quantities score each series on its level (|x - median|) and jump
-(|dx|) sides against thresholds fixed at the 95% quantile of the pooled real scores; the
-metric is the W1 distance between the generated and real per-series values, divided by
-the std of the real values.
+All are lower-is-better. The extreme quantities score each series on its level
+(|x - median|, "Mag") and change (|dx|, "Chg") sides against thresholds fixed at the 95%
+quantile of the pooled real scores: the rate is how often a series exceeds the threshold,
+the excess how far it goes past it. Each metric is the W1 distance between the generated
+and real per-series values, divided by the std of the real values.
+
+`evaluation/evaluate.py` scores individual files and additionally computes three learned
+metrics (discriminative, predictive, Context-FID; GPU required):
+
+```bash
+python evaluation/evaluate.py --dataset ecg --all                  # everything in results/ and outputs/
+python evaluation/evaluate.py --dataset ecg --gen my_samples.npy --cheap-only
+```
 
 ## Baselines
 

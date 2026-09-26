@@ -6,7 +6,8 @@ in `../data/` and to write its generated set to
     outputs/<Method>/[seed<N>/]<dataset>/<Method>_<dataset>_generatedata.npy
 
 (float32, same shape as the real data, original units), which
-`python evaluation/evaluate.py --dataset <dataset> --all` scores. Paths are shared through
+`python evaluation/make_table.py --root outputs` scores. The generated sets behind the
+reported numbers are already in `../results/<Method>/`. Paths are shared through
 `common.py`. Each directory contains only the code on the run path, a `run.sh` launcher
 covering all seven datasets and the seeds used in the paper, and an `UPSTREAM.md` with the
 upstream source, our changes, and the exact settings. Every baseline has its own Python
