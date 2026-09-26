@@ -1,0 +1,119 @@
+model:
+  target: Models.interpretable_diffusion.gaussian_diffusion.E4GEN
+  params:
+    seq_length: 144
+    feature_size: 1
+    n_layer_enc: 2
+    n_layer_dec: 2
+    d_model: 64  # 4 X 16
+    timesteps: 1000
+    fast_sampling: False
+    sampling_timesteps: 1000
+    loss_type: 'l1'
+    beta_schedule: 'cosine'
+    n_heads: 4
+    mlp_hidden_times: 4
+    attn_pd: 0.0
+    resid_pd: 0.0
+    kernel_size: 1
+    padding_size: 0
+
+    heavy: False
+    heavy_nu: 2.5
+    heavy_var_correction: True
+    # Optional variance-matching loss to reduce over-smoothing (0.0 disables it).
+    # Slightly stronger setting to further widen shoulders.
+    var_loss_weight: 3
+
+    sanity_prob: 0.002
+    sanity_quantile: 0.999
+    sanity_compare_ref: True
+    sanity_check_xt: True
+
+
+solver:
+  base_lr: 1.0e-5
+  max_epochs: 10000
+  results_folder: ./Checkpoint
+  gradient_accumulate_every: 2
+  save_cycle: 1000
+  ema:
+    decay: 0.995
+    update_interval: 10
+
+  scheduler:
+    target: engine.lr_sch.ReduceLROnPlateauWithWarmup
+    params:
+      factor: 0.5
+      patience: 2000
+      min_lr: 1.0e-5
+      threshold: 1.0e-1
+      threshold_mode: rel
+      warmup_lr: 8.0e-4
+      warmup: 500
+      verbose: False
+
+train:
+  params:
+    data_path: ../../data/transportation_seq_144_sample_1320.npy
+    # Last fraction of complete seq windows = validation only (same file; no *_validation.npy).
+    val_holdout_fraction: 0.8
+    sample_number: 1320
+    seq_length: 144
+    batch_size: 64
+
+sample:
+  params:
+    num_samples: 1320
+    batch_size: 100
+    whe_trace: False
+    # ControlNet sampling (requires --train_extreme and --train_controlnet first)
+    use_controlnet: False
+    tau: 0.5
+
+extreme_model:
+  extreme_tail: upper
+  prediction:
+    K_max: 8
+    threshold: 0.097 # in original (raw) data space; normalized internally via training normalizer
+    t_min: 0
+    t_max: 100
+    batch_size: 64
+    num_epochs: 100
+    boundary_epochs: 60   # stage 1: train only boundary
+    pmax_epochs: 40      # stage 2: freeze boundary, train pmax (tau = validation-tuned)
+    pmax_warmup_steps: 120  # stage 2: first N steps use GT intervals for pmax loss
+    decoding_tau: 0.5   # fallback before tau_best; after stage 1 we use validation tau_best
+    lr: 1.0e-4
+    warmup_epochs: 0
+    lambda_boundary: 1.0
+    lambda_pmax: 1.0
+    context_left: 3
+    context_right: 3
+    d_model: 128
+    n_heads: 4
+    n_layers: 2
+    dropout: 0.1
+    # Validation: tune decoding threshold tau by minimizing interval_position_mae
+    validation_tune_threshold: true
+    threshold_interval: 0.05
+    # Left tail: near-threshold band ε = k*std(pmax_gt); penalize over-prediction.
+    pmax_loss_near_threshold_k: 0.4
+    pmax_loss_near_over_weight: 1.5
+    pmax_loss_near_under_weight: 0.8
+    # Right tail: magnitude weight and underestimation penalty for non-near events.
+    pmax_loss_magnitude_alpha: 0.55
+    pmax_loss_tail_under_weight: 1.4
+    pmax_loss_tail_over_weight: 1.0
+
+  controlnet:
+    K_max: 8
+    threshold: 0.097
+    batch_size: 64
+    boundary_epochs: 30
+    pmax_epochs: 20
+    lr: 1.0e-4
+    lambda_boundary: 1.0
+    lambda_pmax: 0.1
+    boundary_epsilon_stage2: 0.1
+    soft_exceed_k: 10.0

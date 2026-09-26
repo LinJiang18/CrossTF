@@ -1,0 +1,7 @@
+# Tested with Python 3.11, torch 2.11 (CUDA 12.8), numpy 2.4, scipy 1.17, tqdm 4.70,
+# tensorboard 2.21. Any recent torch with CUDA should work.
+torch
+numpy
+scipy
+tqdm
+tensorboard   # imported by tfdiff/learner.py (SummaryWriter)

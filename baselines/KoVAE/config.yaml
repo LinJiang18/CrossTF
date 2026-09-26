@@ -1,0 +1,27 @@
+# KoVAE on the seven benchmark datasets.
+#
+# Every value below is the argparse default of upstream's run_regular.py
+# (azencot-group/KoVAE). The paper gives per-dataset weights for two datasets only
+# (sine: w_kl .007 / w_pred_prior .005, which are the defaults; stock: .009 / .03);
+# none of ours is either, so all seven use the defaults.
+# The dataset list is not here: run_kovae.py takes it from baselines/common.py.
+
+kovae:
+  epochs: 600            # upstream default
+  lr: 7.0e-4
+  weight_decay: 0.0
+  batch_size: 64
+  num_layers: 3
+  z_dim: 16
+  hidden_dim: 20
+  num_steps: 1
+  w_rec: 1.0
+  w_kl: 0.007
+  w_pred_prior: 0.005
+  batch_norm: true
+  pinv_solver: false
+  missing_value: 0.0
+
+run:
+  seed: 10               # upstream default. One seed per dataset.
+  num_workers: 4

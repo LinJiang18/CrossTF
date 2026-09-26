@@ -1,0 +1,7 @@
+# Environment that produced the reported results (Python 3.10).
+# torchdiffeq is imported by the vendored NeuralCDE / controldiffeq modules (only the
+# irregular-sampling encoder uses it; the regular setting run here never calls it).
+torch==2.8.0
+numpy==1.26.4
+torchdiffeq==0.2.3
+omegaconf==2.3.1

@@ -1,0 +1,12 @@
+_target_: fdiff.dataloaders.datamodules.ECGDatamodule
+data_dir: ${hydra:runtime.cwd}/data
+random_seed: ${random_seed}
+fourier_transform: ${fourier_transform}
+standardize: ${standardize}
+batch_size: 64
+subsample_localization: false
+smooth_frequency: false
+smoother_width: 0.0
+# MIT-BIH train has ~87k beats; keep 10k for faster train/sample.
+max_train_samples: 10000
+max_test_samples: 2000

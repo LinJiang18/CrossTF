@@ -1,0 +1,18 @@
+# TimeGAN (tsgm.models.timeGAN.TimeGAN) -- the settings used for the paper.
+#
+# Architecture values are the original repo's defaults (jsyoon0823/TimeGAN,
+# main_timegan.py); tsgm agrees with them except batch_size (tsgm's default is 256).
+
+timegan:
+  hidden_dim: 24
+  n_layers: 3
+  module: gru
+  gamma: 1.0
+  batch_size: 128
+  lr: 1.0e-3             # Adam, applied to all five tsgm optimizers
+
+run:
+  seed: 10
+  # Training budget in iterations per phase (upstream's unit; upstream uses 50000).
+  # tsgm counts epochs, so per dataset epochs = ceil(iterations / ceil(N / batch_size)).
+  iterations_per_phase: 10000

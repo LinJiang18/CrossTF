@@ -1,0 +1,39 @@
+{
+ "name": "transportation",
+ "alpha": [
+  1.2073,
+  1.3579,
+  1.1517,
+  0.934,
+  1.163,
+  1.0606
+ ],
+ "window_sigma": 0.35,
+ "window_steps": [
+  12,
+  13,
+  14,
+  15,
+  16,
+  17
+ ],
+ "seeds": [
+  4,
+  5,
+  6
+ ],
+ "sample_seeds": [
+  101,
+  202
+ ],
+ "cap": 0.2,
+ "alpha_single": 1.1427196342116732,
+ "roughness": 0.17551885000000003,
+ "pot": 0.39678686789836953,
+ "pot_baseline": 0.44861022520744614,
+ "energy": 0.0015368579446365755,
+ "energy_baseline": 0.0017061293713772506,
+ "energy_tol": 0.006212423656911612,
+ "constraint_ok": true,
+ "evaluations": 70
+}

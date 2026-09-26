@@ -1,0 +1,131 @@
+# Diffusion-TS on the seven benchmark datasets.
+#
+# The dataset list is not here: run_diffusion_ts.py takes it from baselines/common.py.
+# Only `seq_length` and `data_path` vary per dataset; the model below is shared by all
+# seven, which is how upstream treats datasets of equal width (mujoco and eeg are both
+# feature 14 and share a capacity).
+#
+# ---------------------------------------------------------------------------------------
+# Why these numbers, since upstream has no config for our data
+# ---------------------------------------------------------------------------------------
+# Upstream (Y-debug-sys/Diffusion-TS @ 566307e) ships eleven configs. Its README says only
+# six of them -- stocks, sines, mujoco, etth, energy, fmri -- back the paper, and that
+# "you may need to change some parameters in the model for different scenarios". All six
+# are seq_length 24. Ours are 90-250 and univariate, a corner no upstream config occupies,
+# so the values below are derived from how upstream's own configs move, not copied from
+# one of them.
+#
+#   config         seq  feat  enc  dec  d_model  timesteps  attn_pd  kernel  steps  patience
+#   sines           24     5    1    2       64        500      0.0       1  12000      3000
+#   stocks          24     6    2    2       64        500      0.0       1  10000      2000
+#   etth            24     7    3    2       64        500      0.0       1  18000      4000
+#   eeg             24    14    3    2       64        500      0.0       1  12000      3000
+#   mujoco          24    14    3    2       64       1000      0.0       1  14000      3000
+#   energy          24    28    4    3       96       1000      0.0       1  25000      5000
+#   fmri            24    50    4    4       96       1000      0.0       5  15000      3000
+#   mujoco_sssd    100    14    3    3       64        500        0       1  12000      3000
+#   solar          192   128    4    4       96        500      0.0       1   1500       300
+#
+# What the table says, and what it gives us at feature_size 1, seq_length 90-250:
+#
+#   d_model      64 while feat <= 14, 96 from feat 28 up.                    -> 64
+#   n_layer_enc  rises with feat: 1@5, 2@6, 3@7-14, 4@28+.                   -> see below
+#   n_layer_dec  2 at seq 24, but mujoco_sssd is mujoco at seq 100 with the
+#                SAME feature count and dec goes 2 -> 3. That is the one
+#                place upstream trades capacity for sequence length, and
+#                every dataset of ours is longer than 100 or close to it.    -> 3
+#   timesteps    500 or 1000; 1000 appears at feat >= 14.                    -> 1000, see below
+#   attn_pd      0.0 in all six paper configs (0.1 only in the generic
+#                template, which backs no published result).                 -> 0.0
+#   kernel_size  1 everywhere except fmri at feature 50.                     -> 1
+#   save_cycle   exactly steps/10 in all six.                                -> steps/10
+#   patience     steps/4 to steps/5.                                         -> steps/5
+#   base_lr, ema decay, warmup, warmup_lr, gradient_accumulate_every
+#                identical across all six paper configs.                     -> copied
+#
+# Two places where the rule gives a range and we take the upper end, because a baseline
+# that loses on capacity we chose for it is not evidence about the method:
+#
+#   n_layer_enc  Extrapolating feat 1 below sines' feat 5 would give 1, the thinnest
+#                encoder upstream ships. But our sequences are 4-10x longer than any of
+#                the six, and the dec 2->3 jump above shows upstream answers length with
+#                depth. We take 3 -- etth's and mujoco_sssd's value -- not 1.
+#   timesteps    The two long-sequence configs (mujoco_sssd, solar) use 500, so the rule
+#                points there. We take 1000, which upstream also uses and which cannot
+#                make the model worse; the only cost is sampling wall-clock.
+#
+# `max_epochs` is a step count, not epochs: engine/solver.py assigns it to
+# `train_num_steps` and the loop is `while step < train_num_steps`, one optimiser step per
+# iteration over `gradient_accumulate_every` batches. Upstream's six span 10000-25000. We
+# take 20000, above all but energy.
+
+model:
+  target: Models.interpretable_diffusion.gaussian_diffusion.Diffusion_TS
+  params:
+    # seq_length is filled in per dataset from the data file
+    feature_size: 1
+    n_layer_enc: 3
+    n_layer_dec: 3
+    d_model: 64
+    timesteps: 1000
+    sampling_timesteps: 1000
+    loss_type: 'l1'
+    beta_schedule: 'cosine'
+    n_heads: 4
+    mlp_hidden_times: 4
+    attn_pd: 0.0
+    resid_pd: 0.0
+    kernel_size: 1
+    padding_size: 0
+
+solver:
+  base_lr: 1.0e-5
+  max_epochs: 20000          # gradient steps, see above
+  gradient_accumulate_every: 2
+  save_cycle: 2000           # steps/10, upstream's rule
+  # results_folder is set per dataset by run_diffusion_ts.py
+  ema:
+    decay: 0.995
+    update_interval: 10
+  scheduler:
+    target: engine.lr_sch.ReduceLROnPlateauWithWarmup
+    params:
+      factor: 0.5
+      patience: 4000         # steps/5, upstream's rule
+      min_lr: 1.0e-5
+      threshold: 1.0e-1
+      threshold_mode: rel
+      warmup_lr: 8.0e-4
+      warmup: 500
+      verbose: False
+
+dataloader:
+  train_dataset:
+    target: Utils.Data_utils.preprocessed_dataset.PreprocessedNpyDataset
+    params:
+      # name, data_path and window are filled in per dataset
+      proportion: 1.0        # upstream trains on the whole array for unconditional generation
+      save2npy: False
+      neg_one_to_one: True
+      seed: 42
+      period: train
+  batch_size: 64
+  sample_size: 256
+  shuffle: True
+
+run:
+  # Seeds are not set here: run_diffusion_ts.py maps --seed-index 1/2/3 to seeds
+  # 12345 (upstream main.py's default) / 2 / 3 (PAPER_SEEDS).
+
+  # Reverse-diffusion chunk size. Upstream hardcodes 2001, which is sized for its
+  # seq_length of 24; at our 90-250 the attention matrix is 15-100x larger and 2001 will
+  # not fit. Chunking changes only how the draws are batched, not the distribution --
+  # each chunk is an independent draw from the prior.
+  sample_batch_size: 256
+
+  # Steps between train_metrics.jsonl points. Upstream's Trainer sets 100; this only
+  # affects logging.
+  log_frequency: 100
+
+  # null = generate exactly N (the number of real series).
+  n_generate: null

@@ -1,0 +1,8 @@
+# Copyright The DiGiT Authors
+# SPDX-License-Identifier: Apache-2.0
+
+# Local
+from fms_dgt.__main__ import main
+
+if __name__ == "__main__":
+    main(namespaces=["core"])

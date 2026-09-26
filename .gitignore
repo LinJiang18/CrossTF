@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+# checkpoints and generated sets written by the code
+logs/
+outputs/
+checkpoints/
+baselines/*/work/
+*.pt
+*.pth
+*.ckpt

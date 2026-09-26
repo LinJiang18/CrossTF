@@ -1,0 +1,97 @@
+[project]
+name = "freqdiff"
+
+version = "0.1.0"
+
+description = "Time series diffusion in the frequency domain."
+
+readme = "README.md"
+
+requires-python = ">=3.10"
+
+license = {file = "LICENSE"}
+
+keywords = ["diffusion", "time", "series", "fourier", "frequency", "generative", "machine", "learning", "ai"]
+
+authors = [
+  {name = "Jonathan Crabbé", email = "jonathan.cr1302@gmail.com" },
+  {name = "Nicolas Huynh", email = "nicolas.huynh99@gmail.com" }
+]
+
+maintainers = [
+  {name = "Jonathan Crabbé", email = "jonathan.cr1302@gmail.com" }
+]
+
+classifiers = [
+  "Development Status :: 3 - Alpha",
+
+  "Intended Audience :: Science/Research",
+
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+
+  "License :: OSI Approved :: MIT License",
+
+  "Programming Language :: Python :: 3.10",
+]
+
+dependencies = [
+  "torch",
+  "torchvision",
+  "torchaudio",
+  "lightning",
+  "kaggle",
+  "seaborn",
+  "pandas",
+  "diffusers[torch]",
+  "transformers",
+  "ipython",
+  "hydra-core",
+  "POT",
+  "tables",
+  "einops",
+  "SciencePlots",
+]
+
+
+[project.optional-dependencies]
+test = [
+  "pytest",
+  "coverage",
+  "mypy",
+  "black",
+  "pytest-cov",
+  "pytest-mypy",
+  "pytest-black",
+  "pytest-isort",
+  "pytest-flakes",
+  "pre-commit",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/JonathanCrabbe/FourierDiffusion/"
+"Source" = "https://github.com/JonathanCrabbe/FourierDiffusion/"
+
+[build-system]
+# These are the assumed default build requirements from pip:
+# https://pip.pypa.io/en/stable/reference/pip/#pep-517-and-518-support
+requires = ["setuptools>=43.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra --flakes --isort --mypy --cov --cov-report html --cov-report term"
+testpaths = [
+    "tests",
+]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+exclude = [
+    '^file1\.py$',  # TOML literal string (single-quotes, no escaping necessary)
+]
+ignore_missing_imports = true
+
+[tool.isort]
+profile = "black"

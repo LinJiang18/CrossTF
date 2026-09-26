@@ -1,0 +1,39 @@
+{
+ "name": "temperature",
+ "alpha": [
+  0.7789,
+  0.8038,
+  0.9394,
+  1.3355,
+  1.4599,
+  1.5021
+ ],
+ "window_sigma": 0.35,
+ "window_steps": [
+  12,
+  13,
+  14,
+  15,
+  16,
+  17
+ ],
+ "seeds": [
+  4,
+  5,
+  6
+ ],
+ "sample_seeds": [
+  101,
+  202
+ ],
+ "cap": 0.2,
+ "alpha_single": 1.2622863970723923,
+ "roughness": 0.19315877999999995,
+ "pot": 0.5175521187347559,
+ "pot_baseline": 0.6054113071805997,
+ "energy": 0.009971778459527533,
+ "energy_baseline": 0.008995256541187048,
+ "energy_tol": 0.009898776633873382,
+ "constraint_ok": true,
+ "evaluations": 93
+}

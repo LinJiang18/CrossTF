@@ -1,0 +1,23 @@
+random_seed: 42
+fourier_transform: false
+standardize: true
+# Checkpoints and intermediate arrays; run.sh starts from baselines/FourierDiffusion/,
+# so this is baselines/FourierDiffusion/runs/ (not part of the release).
+output_dir: ${hydra:runtime.cwd}/runs
+
+# project_name mode: pass both `config=<dataset>` (selects config/<dataset>.yaml)
+# and `project_name=<name>` to train on <repo>/data/<filename> and write one flat
+# <output_dir>/<project_name>/ folder. Leaving project_name unset keeps upstream's
+# datamodule/output behaviour (not used for the reported results).
+project_name: null
+
+hydra:
+  run:
+    dir: runs/hydra/${now:%Y-%m-%d}/${now:%H-%M-%S}
+
+defaults:
+  - _self_
+  - score_model: default
+  - datamodule: ecg
+  - trainer: default
+  - config: null

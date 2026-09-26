@@ -1,0 +1,14 @@
+# Python 3.10+. Minimal set for the path used here (cmd/train.py, cmd/sample.py,
+# collect.py); upstream's full list is in pyproject.toml.
+torch
+torchvision
+pytorch-lightning  # code imports pytorch_lightning
+diffusers
+hydra-core
+omegaconf
+POT
+pandas
+numpy
+einops
+tqdm
+pyyaml

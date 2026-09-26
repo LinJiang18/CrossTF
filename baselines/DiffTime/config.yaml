@@ -1,0 +1,53 @@
+# DiffTime hyperparameters used for the paper.
+#
+# Every value under `difftime:` is from Table 5 ("Diffusion Model default hyper-Parameters")
+# of Coletta et al., "On the Constrained Time-Series Generation Problem", NeurIPS 2023.
+# Table 5 is in the appendix of the arXiv version (arXiv:2307.01717), not in the proceedings
+# PDF. DiffTime has no public code; the code is CSDI (ermongroup/CSDI @ 7f24a43).
+#
+# Three values differ from CSDI's own defaults:
+#     epochs       10000                     vs  CSDI epochs 200
+#     lr           1.0e-4                    vs  CSDI 1.0e-3
+#     beta_start   1.0e-6 (Table 5 beta_1)   vs  CSDI 1.0e-4
+
+difftime:
+  # --- training (Table 5) ---
+  batch_size: 16
+  lr: 1.0e-4
+  weight_decay: 1.0e-6
+  # Table 5: epochs 10000, read literally as 10000 passes over the dataset. The runner turns
+  # this into ceil(N / batch_size) * epochs gradient steps (630k for ecg at N=1000).
+  epochs: 10000
+
+  # --- denoiser (Table 5) ---
+  layers: 4
+  channels: 64
+  nheads: 8
+  diffusion_embedding_dim: 128
+
+  # --- noise process (Table 5) ---
+  # beta_t = (sqrt(b1) + t*(sqrt(bT)-sqrt(b1))/(T-1))^2, which is exactly CSDI's "quad"
+  # schedule, np.linspace(beta_start**.5, beta_end**.5, num_steps)**2.
+  beta_start: 1.0e-6        # paper's beta_1
+  beta_end: 0.5             # paper's beta_T
+  num_steps: 50             # paper's noise-steps T
+  schedule: "quad"          # paper's "quadratic"
+  is_linear: false          # standard PyTorch transformer layers, not linear attention
+
+  # --- CSDI side-information dims ---
+  # DiffTime removes CSDI's side information (its appendix E.4); the CSDI model is used
+  # unchanged here, so CSDI's values are kept. 128 also matches the paper's temporal
+  # embedding default (its Figure 6).
+  timeemb: 128
+  featureemb: 16
+  target_strategy: "random"   # unused when is_unconditional is true
+
+run:
+  # Default seed; the paper runs pass --seed 1, 2, 3 explicitly (see run.sh).
+  seed: 1
+  num_workers: 0
+  # Sampling batch size only -- affects memory and speed. Every dataset generates exactly N
+  # samples, N being the length of its own array.
+  sample_batch_size: 64
+  # z-score over the whole array; outputs are written back in the original scale.
+  zscore: true

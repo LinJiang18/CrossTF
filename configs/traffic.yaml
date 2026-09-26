@@ -1,0 +1,42 @@
+# traffic (N=1790, T=144, C=1)
+#
+# One config for both branches and the fusion. The time and frequency branches share
+# every training hyperparameter; only their 2D representation differs.
+
+# --- data ---
+data_path: ./data/Traffic_seq_144_sample_1790.npy
+output_dir: ./outputs
+
+# --- training (shared by --time and --frequency) ---
+epochs: 200
+batch_size: 8
+gen_batch_size: 8
+learning_rate: 0.0001
+weight_decay: 0.00001
+unet_channels: 64
+num_blocks: 1
+ch_mult: [1, 2, 2, 2]
+attn_resolution: [24, 12, 6]
+diffusion_steps: 18
+ema: true
+ema_warmup: 100
+
+# --- time branch: delay embedding ---
+delay: 3
+embedding: 48
+img_resolution: 48
+
+# --- frequency branch: STFT ---
+n_fft: 95
+hop_length: 3
+
+# --- training seeds (both branches are trained on each) ---
+train:
+  seeds: [4, 5, 6]
+
+# --- cross-view fusion (--train --crosstf); unset keys use crosstf/solver.py DEFAULTS ---
+crosstf:
+  seeds: [4, 5, 6]
+  sample_seeds: [101, 202]
+  window_sigma: 0.35
+  cap: 0.2

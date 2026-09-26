@@ -1,0 +1,39 @@
+{
+ "name": "building",
+ "alpha": [
+  1.7354,
+  1.8121,
+  1.9052,
+  1.8713,
+  1.5439,
+  1.2707
+ ],
+ "window_sigma": 0.35,
+ "window_steps": [
+  12,
+  13,
+  14,
+  15,
+  16,
+  17
+ ],
+ "seeds": [
+  4,
+  5,
+  6
+ ],
+ "sample_seeds": [
+  101,
+  202
+ ],
+ "cap": 0.2,
+ "alpha_single": 1.4483,
+ "roughness": 0.19752871,
+ "pot": 0.9029050411788768,
+ "pot_baseline": 1.385653962022945,
+ "energy": -0.007282942288030725,
+ "energy_baseline": -0.01260731398697581,
+ "energy_tol": 0.0054536986288869806,
+ "constraint_ok": true,
+ "evaluations": 62
+}

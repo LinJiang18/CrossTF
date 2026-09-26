@@ -1,0 +1,24 @@
+model_path: ${hydra:runtime.cwd}/runs
+model_id: ub0lv98f
+num_samples: null  # null = generate as many series as the real dataset has
+num_diffusion_steps: 1000
+random_seed: 42
+
+# project_name mode: pass `project_name=<name>` (the value used for train.py) to read
+# <output_dir>/<project_name>/ directly (checkpoint + <project_name>_origindata.npy)
+# and write <project_name>_generatedata.npy, with no results.yaml/metrics.
+# `config=<dataset>` and `fourier_transform` must be passed as for train.py, so both
+# stages agree on which domain was used.
+project_name: null
+output_dir: ${hydra:runtime.cwd}/runs
+fourier_transform: false
+
+hydra:
+  run:
+    dir: runs/hydra/${now:%Y-%m-%d}/${now:%H-%M-%S}
+
+defaults:
+  - _self_
+  - sampler: default
+  - metrics: default
+  - config: null

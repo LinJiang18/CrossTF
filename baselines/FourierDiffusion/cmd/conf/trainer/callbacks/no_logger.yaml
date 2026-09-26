@@ -1,0 +1,4 @@
+- _target_: pytorch_lightning.callbacks.ModelCheckpoint
+  monitor: val/loss
+  filename: "epoch={epoch}-val_loss={val/loss:.2f}"
+  auto_insert_metric_name: false

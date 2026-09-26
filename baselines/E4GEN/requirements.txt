@@ -1,0 +1,11 @@
+# Python 3.10. Versions of the environment used for the reported runs.
+numpy==1.26.4
+torch==2.8.0
+einops==0.6.0
+ema-pytorch==0.2.1
+scikit-learn==1.6.1
+scipy==1.13.1
+tqdm==4.67.3
+PyYAML==6.0
+# joblib is installed with scikit-learn. matplotlib is only needed for the optional,
+# off-by-default validation plots in Models/extreme/extreme_validation.py.

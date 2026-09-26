@@ -1,0 +1,4 @@
+# Runtime artifacts written by main.py (relative to this directory).
+OUTPUT/
+Checkpoint/
+__pycache__/

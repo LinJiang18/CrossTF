@@ -1,0 +1,39 @@
+{
+ "name": "precipitation",
+ "alpha": [
+  0.4037,
+  0.7012,
+  0.9791,
+  1.1006,
+  1.0062,
+  0.954
+ ],
+ "window_sigma": 0.35,
+ "window_steps": [
+  12,
+  13,
+  14,
+  15,
+  16,
+  17
+ ],
+ "seeds": [
+  4,
+  5,
+  6
+ ],
+ "sample_seeds": [
+  101,
+  202
+ ],
+ "cap": 0.2,
+ "alpha_single": 0.9146210431841688,
+ "roughness": 0.19213311,
+ "pot": 0.27104885446129895,
+ "pot_baseline": 0.3575525659548491,
+ "energy": -0.0030718006676599464,
+ "energy_baseline": -0.0024075408619238636,
+ "energy_tol": 0.001093643669802728,
+ "constraint_ok": true,
+ "evaluations": 55
+}

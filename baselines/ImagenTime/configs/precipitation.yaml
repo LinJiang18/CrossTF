@@ -1,0 +1,30 @@
+# ImagenTime on 'precipitation' (seed is passed on the command line; see ../run.sh).
+benchmark_dataset: precipitation
+epochs: 200
+batch_size: 8
+learning_rate: 0.0001
+weight_decay: 1.0e-05
+dataset: toyexample
+project_name: ImagenTime_precipitation
+num_samples: 1056
+seq_len: 90
+use_stft: false
+delay: 2
+embedding: 32
+img_resolution: 32
+input_channels: 1
+unet_channels: 128
+ch_mult:
+- 1
+- 2
+- 4
+- 4
+attn_resolution:
+- 32
+- 16
+- 8
+diffusion_steps: 18
+ema: true
+ema_warmup: 100
+logging_iter: 100
+eval_during_training: false

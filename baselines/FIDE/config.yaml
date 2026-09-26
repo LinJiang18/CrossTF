@@ -1,0 +1,21 @@
+# FIDE hyperparameters used for the reported results (all seven datasets).
+# Values are upstream's (Code/main_temperature_example.py in github.com/galib19/FIDE)
+# except n_epochs.
+
+fide:
+  hidden_dim: 64                      # upstream
+  batch_size: 2000                    # upstream. Larger than every N here (1000-1838), so
+                                      # training is full-batch: one gradient step per epoch.
+  # Upstream uses 400. Our sequences (T = 90-250) are 3-8x longer than upstream's
+  # temperature example (T = 30), where the loss plateaus after ~200-300 full-batch
+  # steps, so we train 2000 steps to avoid reporting an under-trained model.
+  n_epochs: 2000
+  freq_enhance_c: 1.1                 # upstream
+  percentage_of_freq_enhanced: 20     # upstream
+  reg_weight: 0.05                    # upstream's -0.05 coefficient on the GEV term
+
+  # Not exposed: diffusion_steps (100), the beta schedule (1e-4 -> 0.2 linear), gp_sigma
+  # (0.05) and the Adam defaults live in Code/train_utilities.py, unchanged from upstream.
+
+run:
+  seed: 10                            # upstream sets none

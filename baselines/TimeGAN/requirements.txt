@@ -1,0 +1,7 @@
+# Tested with Python 3.11, tsgm 0.1.0, keras 3.15, torch 2.11 (CUDA 12.8), numpy 2.4,
+# PyYAML 6.0. tsgm pulls in tensorflow as well; only the torch backend is used.
+tsgm==0.1.0
+keras>=3
+torch
+numpy
+pyyaml

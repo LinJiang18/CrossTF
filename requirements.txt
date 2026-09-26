@@ -1,0 +1,11 @@
+# CrossTF (training, sampling, coefficient solve) and the evaluation code.
+# Tested with python 3.10. Install torch/torchaudio from the PyTorch index matching your
+# CUDA version, e.g.
+#   pip install torch==2.13.0 torchaudio==2.11.0 --index-url https://download.pytorch.org/whl/cu130
+torch==2.13.0
+torchaudio==2.11.0
+numpy==2.2.6
+scipy==1.15.3
+omegaconf==2.3.1
+pyyaml
+scikit-learn

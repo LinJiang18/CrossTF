@@ -1,0 +1,5 @@
+# Selected with `config=traffic`. `filename` is resolved against <repo>/data/;
+# num_dataset_samples is only a consistency check (the loaded array's shape wins).
+# The time/frequency domain is chosen by the top-level `fourier_transform` override.
+filename: Traffic_seq_144_sample_1790.npy
+num_dataset_samples: 1790

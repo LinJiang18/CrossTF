@@ -1,0 +1,39 @@
+######################################################
+#                   MANDATORY FIELDS
+######################################################
+task_name: time_series/Traffic_multisample
+task_description: This task is used to generate synthetic time series data.
+created_by: CrossTF baseline runner
+
+data_builder: time_series
+
+######################################################
+#                   RESERVED FIELDS
+######################################################
+data:
+  type: default
+  data_path: ${DGT_DATA_DIR}/public/time_series/Traffic_seq_144_sample_1790.parquet
+
+######################################################
+#                   TASK FIELDS
+######################################################
+data_params:
+  train_length: 144
+  train_samples: 1790
+  augmentation_strategy: multisample
+  train_channels:
+    - "TOY-"
+
+# sdforger args
+sdforger_params:
+  k_bit: null
+  min_outputs_to_generate: 1790
+  max_outputs_to_generate: 1790
+  inference_batch: 64
+  norms_diversity_threshold: 0 # diversity early-stop off, so generation can reach the cap
+  embedding_type: "fica"
+  embedding_dim: auto
+  variance_explained: 0.7
+  min_windows_number: 30
+  min_windows_length: 144
+  input_tokens_precision: 4
