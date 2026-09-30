@@ -57,6 +57,9 @@ def parse_args():
     parser.add_argument('--alpha_file', type=str, default=None,
                         help='fusion coefficients for --sample --crosstf (default: '
                              'logs/CrossTF_<name>/alpha.json)')
+    parser.add_argument('--solve_seeds', type=int, nargs='+', default=None,
+                        help='training seeds whose branch pairs --train --crosstf solves on '
+                             '(default: the config\'s crosstf.seeds)')
     parser.add_argument('--sample_seed', type=int, default=None,
                         help='sampling seed for --sample --crosstf (default: fixed per '
                              'training seed, see main.py)')

@@ -160,6 +160,8 @@ def crosstf_train(args):
     from crosstf import save_alpha
     from crosstf.solver import solve
     cfg = dict(getattr(args, 'crosstf', None) or {})
+    if getattr(args, 'solve_seeds', None):
+        cfg['seeds'] = list(args.solve_seeds)
     result = solve(args.config_file, args.name,
                    device='cuda' if torch.cuda.is_available() else 'cpu',
                    log_root=args.log_dir, **cfg)

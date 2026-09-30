@@ -9,4 +9,6 @@ baselines/*/work/
 *.pt
 *.pth
 *.ckpt
+# fusion coefficients solved from the released branches
+pretrained/CrossTF_*/
 tables/
