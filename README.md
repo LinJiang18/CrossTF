@@ -40,7 +40,7 @@ baselines on every dataset, **on CPU**:
 python evaluation/make_table.py --out tables/
 ```
 
-## Run CrossTF
+## Run CrossTF (GPU required)
 
 We use the **Precipitation** dataset as the example; `pretrained/` holds its checkpoints.
 **Checkpoints for all datasets will be released upon acceptance.**
