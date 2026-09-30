@@ -18,48 +18,47 @@
   <img src="assets/main_results.png" width="100%" alt="Summary of comparisons on seven datasets: CrossTF improves extreme fidelity by 26.1% and overall performance by 7.4% over the strongest baseline, with 730 wins and 40 losses in 770 pairwise comparisons.">
 </p>
 
-## Reproduce the tables
-
-**All generated samples behind the paper are released in `results/`.** After [setup](#setup),
-one command rebuilds the per-dataset tables for every method, **on CPU**:
-
-```bash
-python evaluation/make_table.py --out tables/
-```
-
-The three learned metrics (discriminative, predictive, Context-FID) need a GPU:
-
-```bash
-python evaluation/evaluate.py --dataset precipitation --all
-```
-
 ## Setup
 
 ```bash
 conda create -n crosstf python=3.10 -y && conda activate crosstf
-pip install torch==2.13.0 torchaudio==2.11.0 --index-url https://download.pytorch.org/whl/cu130   # match your CUDA
+# match the index URL to your CUDA version
+pip install torch==2.13.0 torchaudio==2.11.0 --index-url https://download.pytorch.org/whl/cu130
 pip install -r requirements.txt
 ```
 
 **Keep the torchaudio version**: the frequency view depends on it. Each baseline has its own
 environment; see [`baselines/README.md`](baselines/README.md).
 
+## Quickly Reproduce the Results for Every Dataset
+
+**All generated samples behind the paper are released in `results/`.** One command rebuilds
+the per-dataset result tables of the paper (**Tables 3 and 13–18**) for every method,
+**on CPU in about five minutes**:
+
+```bash
+python evaluation/make_table.py --out tables/
+```
+
 ## Run CrossTF
 
 **From the released checkpoints** (Precipitation, no training):
 
 ```bash
-python main.py --config_file configs/precipitation.yaml --train  --crosstf --log_dir pretrained            # solve the fusion coefficients
-python main.py --config_file configs/precipitation.yaml --sample --crosstf --log_dir pretrained --seed 4   # sample -> outputs/
+# solve the fusion coefficients, then sample -> outputs/
+python main.py --config configs/precipitation.yaml --train  --crosstf --log_dir pretrained
+python main.py --config configs/precipitation.yaml --sample --crosstf --log_dir pretrained --seed 4
 ```
 
 **From scratch** (Precipitation, one seed):
 
 ```bash
-python main.py --config_file configs/precipitation.yaml --train  --time      --seed 1   # train the time branch
-python main.py --config_file configs/precipitation.yaml --train  --frequency --seed 1   # train the frequency branch
-python main.py --config_file configs/precipitation.yaml --train  --crosstf   --solve_seeds 1
-python main.py --config_file configs/precipitation.yaml --sample --crosstf   --seed 1   # sample -> outputs/
+# train the time and the frequency branch
+python main.py --config configs/precipitation.yaml --train  --time      --seed 1
+python main.py --config configs/precipitation.yaml --train  --frequency --seed 1
+# solve the fusion coefficients, then sample -> outputs/
+python main.py --config configs/precipitation.yaml --train  --crosstf   --solve_seeds 1
+python main.py --config configs/precipitation.yaml --sample --crosstf   --seed 1
 ```
 
 **All datasets, as in the paper:** `bash run_crosstf.sh`
