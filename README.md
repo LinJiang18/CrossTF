@@ -30,11 +30,11 @@ pip install -r requirements.txt
 **Keep the torchaudio version**: the frequency view depends on it. Each baseline has its own
 environment; see [`baselines/README.md`](baselines/README.md).
 
-## Quickly Reproduce the Results for Every Dataset
+## Quickly Reproduce the Results (5 mins)
 
 **All generated samples behind the paper are released in `results/`.** One command rebuilds
-the per-dataset result tables of the paper (**Tables 3 and 13–18**) for every method,
-**on CPU in about five minutes**:
+the per-dataset result tables of the paper (**Tables 3 and 13–18**) for our method and all
+baselines on every dataset, **on CPU**:
 
 ```bash
 python evaluation/make_table.py --out tables/
@@ -42,7 +42,10 @@ python evaluation/make_table.py --out tables/
 
 ## Run CrossTF
 
-**From the released checkpoints** (Precipitation, no training):
+We use the **Precipitation** dataset as the example; `pretrained/` holds its checkpoints.
+**Checkpoints for all datasets will be released upon acceptance.**
+
+**From the released checkpoints** (no training):
 
 ```bash
 # solve the fusion coefficients, then sample -> outputs/
@@ -50,7 +53,7 @@ python main.py --config configs/precipitation.yaml --train  --crosstf --log_dir 
 python main.py --config configs/precipitation.yaml --sample --crosstf --log_dir pretrained --seed 4
 ```
 
-**From scratch** (Precipitation, one seed):
+**From scratch** (one seed):
 
 ```bash
 # train the time and the frequency branch
@@ -60,11 +63,6 @@ python main.py --config configs/precipitation.yaml --train  --frequency --seed 1
 python main.py --config configs/precipitation.yaml --train  --crosstf   --solve_seeds 1
 python main.py --config configs/precipitation.yaml --sample --crosstf   --seed 1
 ```
-
-**All datasets, as in the paper:** `bash run_crosstf.sh`
-
-`pretrained/` holds the six Precipitation branches as a sample; due to space limits,
-**all checkpoints will be released upon acceptance.**
 
 ## Repository
 
