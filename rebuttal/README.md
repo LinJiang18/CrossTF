@@ -20,7 +20,7 @@ Loss, Overall and Extreme are relative max–min ranges over α ∈ [0, 1].
 One NVIDIA GPU with CUDA (tested on an RTX PRO 6000), Python 3.10:
 
 ```bash
-conda create -n reprotable python=3.10 -y && conda activate reprotable
+conda create -n reporttable1 python=3.10 -y && conda activate reporttable1
 # match the index URL to your CUDA version
 pip install torch==2.13.0 torchaudio==2.11.0 --index-url https://download.pytorch.org/whl/cu130
 pip install numpy==2.2.6 scipy==1.15.3 omegaconf==2.3.1 pyyaml scikit-learn
