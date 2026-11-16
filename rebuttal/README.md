@@ -23,7 +23,7 @@ One NVIDIA GPU with CUDA (tested on an RTX PRO 6000), Python 3.10:
 conda create -n crosstf python=3.10 -y && conda activate crosstf
 # match the index URL to your CUDA version
 pip install torch==2.13.0 torchaudio==2.11.0 --index-url https://download.pytorch.org/whl/cu130
-pip install -r requirements.txt     # numpy, scipy, omegaconf, pyyaml, scikit-learn
+pip install numpy==2.2.6 scipy==1.15.3 omegaconf==2.3.1 pyyaml scikit-learn
 ```
 
 The checkpoints (`rebuttal/pretrained/`, 28 files) and the data (`data/`) are in the
