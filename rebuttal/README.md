@@ -34,11 +34,8 @@ repository; nothing else needs to be downloaded.
 From the repository root:
 
 ```bash
-# all seven datasets: about 15 minutes
+# about 15 minutes
 python rebuttal/reproduce_Table1.py
-
-# one dataset: from about 30 s (precipitation) to about 3 min (ecg)
-python rebuttal/reproduce_Table1.py --datasets precipitation
 ```
 
 The script prints Table 1 in the format above.
